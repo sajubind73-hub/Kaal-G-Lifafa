@@ -75,19 +75,19 @@
 <p class="footer-text">Powered by Mr. Saju</p>
 
 <script>
-    // 1. सुरक्षा के लिए पासवर्ड (इसे बदल सकते हैं)
     const access = prompt("Admin Password दर्ज करें:");
-    if (access !== "Sonali,7355") {
-        alert("गलत पासवर्ड! एक्सेस मना है।");
-        window.location.href = "index.html";
-    }
+if (access !== "YOUR_SECRET_PASSWORD") { // अपना असली पासवर्ड यहाँ से हटाकर "YOUR_SECRET_PASSWORD" लिख दें
+    alert("गलत पासवर्ड!");
+    window.location.href = "index.html";
+}
 
-    // 2. Firebase Config (अपनी script.js वाला ही यहाँ पेस्ट करें)
+
     const firebaseConfig = {
-        apiKey: "AIzaSyBfIqgKAkaOgrU8IfoSVE0qSuZF6jg2zuo",
-        databaseURL: "https://kaal-g-lifafa-default-rtdb.firebaseio.com/",
-        projectId: "kaal-g-lifafa",
-    };
+    apiKey: "FIREBASE_API_KEY_PLACEHOLDER", // अपनी असली Key यहाँ से हटा दें
+    databaseURL: "DATABASE_URL_PLACEHOLDER", // अपना असली URL यहाँ से हटा दें
+    projectId: "YOUR_PROJECT_ID", // इसे रहने दे सकते हैं
+};
+
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
