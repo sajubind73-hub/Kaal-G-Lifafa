@@ -9,7 +9,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        body { padding: 10px; flex-direction: column; height: auto; overflow-y: auto; }
+        body { padding: 10px; display: flex; flex-direction: column; align-items: center; height: auto; overflow-y: auto; background: #f4f7f6; }
         .admin-box { 
             width: 100%; max-width: 900px; background: rgba(255, 255, 255, 0.9); 
             border-radius: 15px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -18,42 +18,29 @@
         .table-wrapper { overflow-x: auto; margin-top: 20px; }
         table { width: 100%; border-collapse: collapse; min-width: 600px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; font-size: 14px; color: #333; }
-        th { background: #6c5ce7; color: white; border-radius: 5px; }
+        th { background: #6c5ce7; color: white; }
         tr:hover { background: rgba(108, 92, 231, 0.05); }
         .refresh-btn { 
             background: #0088cc; color: white; border: none; padding: 10px 20px; 
-            border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 10px;
+            border-radius: 8px; cursor: pointer; font-weight: bold;
         }
-        /* लाइन 26 के बाद इसे पेस्ट करें */
-.logout-btn { 
-    background: #ff4d4d; 
-    color: white; 
-    border: none; 
-    padding: 10px 20px; 
-    border-radius: 8px; 
-    cursor: pointer; 
-    font-weight: bold; 
-    margin-left: 10px;
-}
-.logout-btn:hover { 
-    background: #ff3333; 
-}
+        .logout-btn { 
+            background: #ff4d4d; color: white; border: none; padding: 10px 20px; 
+            border-radius: 8px; cursor: pointer; font-weight: bold; margin-left: 10px;
+        }
+        .logout-btn:hover { background: #ff3333; }
+        .footer-text { margin-top: 20px; color: #777; font-size: 14px; }
     </style>
 </head>
 <body>
 
-<div class="glowing-bg"></div>
-
 <div class="brand-container">
     <h1 class="stylish-brand">Admin <span>Panel</span></h1>
-    <div class="glow-line"></div>
 </div>
 
 <div class="admin-box">
     <button class="refresh-btn" onclick="location.reload()"><i class="fas fa-sync-alt"></i> Refresh Data</button>
-    
     <button class="logout-btn" onclick="logoutAdmin()"><i class="fas fa-sign-out-alt"></i> Logout</button>
-
     
     <div class="table-wrapper">
         <table>
@@ -67,7 +54,8 @@
                 </tr>
             </thead>
             <tbody id="userTableBody">
-                </tbody>
+                <tr><td colspan='5' style='text-align:center;'>डेटा लोड हो रहा है...</td></tr>
+            </tbody>
         </table>
     </div>
 </div>
@@ -75,50 +63,78 @@
 <p class="footer-text">Powered by Mr. Saju</p>
 
 <script>
-    const access = prompt("Admin Password दर्ज करें:");
-if (access !== "YOUR_SECRET_PASSWORD") { // अपना असली पासवर्ड यहाँ से हटाकर "YOUR_SECRET_PASSWORD" लिख दें
-    alert("गलत पासवर्ड!");
-    window.location.href = "index.html";
-}
+    // 1. Password Security Logic (SHA-256)
+    async function checkAccess() {
+        const access = prompt("Admin Password दर्ज करें:");
+        if (!access) { window.location.href = "index.html"; return; }
 
+        // यह "Saju@123" का सुरक्षित कोड (Hash) है
+        const secretHash = "579899f8f41584ad8d390a42426362947f688085601247076294b46c65b985f2";
 
-    const firebaseConfig = {
-    apiKey: "FIREBASE_API_KEY_PLACEHOLDER", // अपनी असली Key यहाँ से हटा दें
-    databaseURL: "DATABASE_URL_PLACEHOLDER", // अपना असली URL यहाँ से हटा दें
-    projectId: "YOUR_PROJECT_ID", // इसे रहने दे सकते हैं
-};
+        const msgBuffer = new TextEncoder().encode(access);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-
-    // 3. डेटा लोड करना
-    const userRef = database.ref('users/');
-    userRef.on('value', (snapshot) => {
-        const data = snapshot.val();
-        const tableBody = document.getElementById("userTableBody");
-        tableBody.innerHTML = ""; 
-
-        if (data) {
-            for (let user in data) {
-                let row = `<tr>
-                    <td style="font-weight:bold; color:#6c5ce7;">${data[user].username || 'N/A'}</td>
-                    <td>${data[user].ip || 'N/A'}</td>
-                    <td>${data[user].isp || 'N/A'}</td>
-                    <td>${data[user].city || 'N/A'}</td>
-                    <td>${data[user].lastLogin || 'N/A'}</td>
-                </tr>`;
-                tableBody.innerHTML += row;
-            }
+        if (hashHex !== secretHash) {
+            alert("गलत पासवर्ड!");
+            window.location.href = "index.html";
         } else {
-            tableBody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>कोई डेटा नहीं मिला।</td></tr>";
+            initFirebase(); // सही पासवर्ड होने पर ही डेटा लोड होगा
         }
-    });
-</script>
-function logoutAdmin() {
-    if(confirm("क्या आप लॉगआउट करना चाहते हैं?")) {
-        window.location.href = "index.html"; // यह यूजर को वापस होम पेज पर भेज देगा
     }
-}
+
+    // 2. Firebase Initialization
+    function initFirebase() {
+        const firebaseConfig = {
+            apiKey: "YOUR_ACTUAL_API_KEY", // यहाँ असली Key डालें (यह प्रतिबंधित है इसलिए सुरक्षित है)
+            databaseURL: "YOUR_ACTUAL_DATABASE_URL", // यहाँ असली Database URL डालें
+            projectId: "kaal-g-lifafa", //
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
+        loadData();
+    }
+
+    // 3. Data Loading
+    function loadData() {
+        const database = firebase.database();
+        const userRef = database.ref('users/');
+        userRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            const tableBody = document.getElementById("userTableBody");
+            tableBody.innerHTML = ""; 
+
+            if (data) {
+                for (let user in data) {
+                    let row = `<tr>
+                        <td style="font-weight:bold; color:#6c5ce7;">${data[user].username || 'N/A'}</td>
+                        <td>${data[user].ip || 'N/A'}</td>
+                        <td>${data[user].isp || 'N/A'}</td>
+                        <td>${data[user].city || 'N/A'}</td>
+                        <td>${data[user].lastLogin || 'N/A'}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                }
+            } else {
+                tableBody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>कोई डेटा नहीं मिला।</td></tr>";
+            }
+        });
+    }
+
+    // 4. Logout Function
+    function logoutAdmin() {
+        if(confirm("क्या आप लॉगआउट करना चाहते हैं?")) {
+            window.location.href = "index.html";
+        }
+    }
+
+    // पेज लोड होते ही एक्सेस चेक करें
+    checkAccess();
+</script>
 
 </body>
 </html>
