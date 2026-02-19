@@ -1,19 +1,17 @@
-// 1. Firebase Config (Firebase Console से अपना असली डेटा डालें)
+// GitHub के लिए सुरक्षित कोड
 const firebaseConfig = {
-  apiKey: "AIzaSyBfIqgKAkaOgrU8IfoSVE0qSuZF6jg2zuo",
-  authDomain: "kaal-g-lifafa.firebaseapp.com",
-  databaseURL: "https://kaal-g-lifafa-default-rtdb.firebaseio.com/",
-  projectId: "kaal-g-lifafa",
-  storageBucket: "kaal-g-lifafa.firebasestorage.app",
-  messagingSenderId: "524587812765",
-  appId: "1:524587812765:web:fc3220f43a23d95445d174"
+    apiKey: "FIREBASE_API_KEY_PLACEHOLDER", // असली Key हटा दी
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "YOUR_DATABASE_URL_PLACEHOLDER", // असली URL हटा दिया
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "SENDER_ID",
+    appId: "APP_ID"
 };
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-const BOT_TOKEN = "8429085928:AAG64m84UkNXJSYIRF6r2OCHmstDTJepd7Y";
-let generatedOTP = 0;
-
+const BOT_TOKEN = "TELEGRAM_BOT_TOKEN_PLACEHOLDER";
 // Tab Switch Function
 function openTab(tabName) {
     let content = document.getElementsByClassName("tab-content");
