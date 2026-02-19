@@ -20,6 +20,10 @@ const db = admin.firestore();
 const bot = new TelegramBot(process.env.BOT_TOKEN);
 bot.setWebHook("https://kaal-g-lifafa.onrender.com/bot");
 
+bot.onText(/\/start/, (msg) => {
+  bot.sendMessage(msg.chat.id, "Welcome to Kaal G Lifafa 🔐\nYour Telegram OTP Login System is Active.");
+});
+
 app.get('/', (req, res) => {
   res.send("Kaal G Lifafa Backend Running 🚀");
 });
