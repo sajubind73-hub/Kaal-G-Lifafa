@@ -17,12 +17,16 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
+const bot = new TelegramBot(process.env.BOT_TOKEN);
+bot.setWebHook("https://kaal-g-lifafa.onrender.com/bot");
 
 app.get('/', (req, res) => {
   res.send("Kaal G Lifafa Backend Running 🚀");
 });
-
+app.post('/bot', (req, res) => {
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
+});
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server running on port " + PORT);
