@@ -27,3 +27,15 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server running on port " + PORT);
 });
+
+bot.onText(/\/start/, async (msg) => {
+
+  const chatId = msg.chat.id;
+  const username = msg.from.username || "no_username";
+
+  await db.collection('telegram_users').doc(username).set({
+    chatId: chatId
+  });
+
+  bot.sendMessage(chatId, "Telegram Connected Successfully ✅");
+});
