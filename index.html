@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KaalGlifafa - Mr. Saju</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body>
+
+<div class="glowing-bg"></div>
+
+<div class="auth-container" id="mainBox">
+    <div class="brand-container" style="text-align: center;">
+        <h1 class="stylish-brand">Kaal G<span> lifafa</span></h1>
+        <div class="glow-line"></div>
+    </div>
+    
+    <div id="authTabs">
+        <div class="tabs">
+            <button class="tab-btn" onclick="openTab('login')"><i class="fas fa-sign-in-alt"></i> Login</button>
+            <button class="tab-btn active" id="defaultOpen" onclick="openTab('register')"><i class="fas fa-user-plus"></i> Register</button>
+            <button class="tab-btn" onclick="openTab('forgot')"><i class="fas fa-key"></i> Forgot</button>
+        </div>
+
+        <div id="register" class="tab-content">
+            <div class="input-group">
+                <label>USERNAME</label>
+                <input type="text" id="regUser" placeholder="Enter your username">
+            </div>
+            <div class="input-group">
+                <label>EMAIL ADDRESS</label>
+                <input type="email" id="regEmail" placeholder="you@example.com">
+            </div>
+            <div class="input-group">
+                <label>PHONE NUMBER</label>
+                <input type="number" id="regPhone" placeholder="10-digit number">
+            </div>
+            <div class="input-group">
+                <label>CONFIRM PHONE NUMBER</label>
+                <input type="number" id="regConfirmPhone" placeholder="Re-enter 10-digit number">
+            </div>
+            <div class="input-group">
+                <label>PASSWORD</label>
+                <div class="password-wrapper" style="position: relative;">
+                    <input type="password" id="regPass" placeholder="At least 6 characters">
+                    <i class="far fa-eye" id="togglePass" style="position: absolute; right: 15px; top: 13px; cursor: pointer; color: #666;"></i>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>TELEGRAM ID</label>
+                <input type="text" id="telegramId" placeholder="Your Telegram ID">
+            </div>
+            <button type="button" class="btn-telegram" onclick="window.open('https://t.me/YOUR_BOT_USERNAME')">
+                <i class="fab fa-telegram-plane"></i> Click to Verify & Get Telegram ID
+            </button>
+            <button type="button" class="btn-main" onclick="processAuth('register')">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+        </div>
+
+        <div id="login" class="tab-content" style="display:none">
+            <div class="input-group">
+                <label>USERNAME</label>
+                <input type="text" id="loginUser" placeholder="Enter your username">
+            </div>
+            <div class="input-group">
+                <label>PASSWORD</label>
+                <input type="password" id="loginPass" placeholder="Enter password">
+            </div>
+            <button type="button" class="btn-main" onclick="processAuth('login')">Login Now</button>
+        </div>
+
+        <div id="forgot" class="tab-content" style="display:none">
+            <div class="input-group">
+                <label>TELEGRAM PHONE NUMBER</label>
+                <input type="number" id="forgotPhone" placeholder="Enter Telegram Number">
+            </div>
+            <button type="button" class="btn-main" onclick="processAuth('forgot')">Reset Password</button>
+        </div>
+    </div>
+
+    <div id="otpSection" style="display:none; text-align: center;">
+        <div class="input-group">
+            <label>ENTER OTP FROM TELEGRAM</label>
+            <input type="number" id="otpInput" placeholder="6-digit code">
+        </div>
+        <button type="button" class="btn-main" onclick="verifyFinal()">Verify OTP</button>
+    </div>
+
+    <p class="footer-text">Powered by Mr. Saju</p>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
