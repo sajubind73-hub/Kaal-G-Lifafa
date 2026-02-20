@@ -1,13 +1,11 @@
-// send-otp.js (Backend file)
 export default async function handler(req, res) {
-    if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method Not Allowed' });
+    }
 
     const { telegramId, otp } = req.body;
+    const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
     
-    // YAHAN DEKHO: Humne asali token nahi dala, bas ek variable likha hai
-    // Vercel khud apni tijori se token utha kar yahan fit kar dega
-    const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN; 
-
     const text = `🔐 *KGL REGISTRATION*\n\nYour OTP is: \`${otp}\``;
     const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${telegramId}&text=${encodeURIComponent(text)}&parse_mode=Markdown`;
 
