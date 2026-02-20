@@ -1,9 +1,6 @@
 {
   "version": 2,
-  "rewrites": [
-    {
-      "source": "/api/send-otp",
-      "destination": "/send-otp.js"
-    }
+  "routes": [
+    { "src": "/api/send-otp", "dest": "/send-otp.js" }
   ]
 }
