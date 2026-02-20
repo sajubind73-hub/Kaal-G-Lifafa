@@ -5,10 +5,5 @@
       "source": "/api/send-otp",
       "destination": "/send-otp.js"
     }
-  ],
-  "functions": {
-    "send-otp.js": {
-      "runtime": "vercel-node@latest"
-    }
-  }
+  ]
 }
