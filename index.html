@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaal G lifafa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        
+        <div class="header-container">
+            <h1 class="premium-title">Kaal G lifafa</h1>
+        </div>
+
+        <div class="form-card">
+            <div class="tabs">
+                <button class="tab-link active" onclick="openTab(event, 'login')"><i class="fas fa-sign-in-alt"></i> Login</button>
+                <button class="tab-link" onclick="openTab(event, 'register')"><i class="fas fa-user-plus"></i> Register</button>
+                <button class="tab-link" onclick="openTab(event, 'forgot')"><i class="fas fa-key"></i> Forgot</button>
+            </div>
+
+            <div id="login" class="tab-content active">
+                <div class="input-group">
+                    <label>PHONE NUMBER</label>
+                    <input type="number" id="phoneInput" placeholder="Enter 10-digit number">
+                </div>
+                <div class="input-group">
+                    <label>PASSWORD</label>
+                    <div class="pass-wrapper">
+                        <input type="password" id="passInput" placeholder="Enter your password">
+                        <i class="fas fa-eye-slash" onclick="togglePass('passInput', this)"></i>
+                    </div>
+                </div>
+                <button class="btn-main purple-btn" onclick="loginUser()">Sign In</button>
+            </div>
+
+            <div id="register" class="tab-content">
+                <div class="input-group"><label>USERNAME</label><input type="text" id="regName" placeholder="Enter your username"></div>
+                <div class="input-group"><label>EMAIL ADDRESS</label><input type="email" placeholder="you@example.com"></div>
+                <div class="input-group"><label>PHONE NUMBER</label><input type="number" id="regPhone" placeholder="10-digit number"></div>
+                <div class="input-group"><label>CONFIRM PHONE NUMBER</label><input type="number" placeholder="Re-enter 10-digit number"></div>
+                <div class="input-group">
+                    <label>PASSWORD</label>
+                    <div class="pass-wrapper">
+                        <input type="password" id="r-pass" placeholder="At least 6 characters">
+                        <i class="fas fa-eye-slash" onclick="togglePass('r-pass', this)"></i>
+                    </div>
+                </div>
+                <div class="input-group"><label>TELEGRAM ID</label><input type="text" placeholder="Your Telegram ID"></div>
+                
+<button class="btn-verify" onclick="openBot()">
+    <i class="fab fa-telegram-plane"></i> Click to Verify & Get Telegram ID
+</button>
+
+<button class="btn-main purple-btn" onclick="startRegistration()">
+    <i class="fas fa-user-plus"></i> Create Account
+</button>
+
+
+            <div id="forgot" class="tab-content">
+                <div class="input-group">
+                    <label>PHONE NUMBER</label>
+                    <input type="number" placeholder="Enter registered number">
+                </div>
+                <button class="btn-main blue-btn">Send Recovery</button>
+            </div>
+        </div>
+
+        <footer class="footer">
+            💫💫💫 <span class="animated-saju"> Powered by Mr. Saju</span>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+
+let generatedOTP = null;
+
+// 1. Telegram Bot par bhejne wala function
+function openBot() {
+    alert("Opening Telegram Bot... Bot par /start likh kar apni ID le lein.");
+    window.open("https://t.me/KaalGlifafa_bot", "_blank"); // Apna asli bot link dalo
+}
+
+// 2. Create Account dabane par OTP bhej kar Pop-up dikhana
+async function startRegistration() {
+    const telegramId = document.querySelector('input[placeholder="Your Telegram ID"]').value;
+    const phone = document.getElementById('regPhone').value;
+    const name = document.getElementById('regName').value;
+
+    if(!telegramId || phone.length < 10 || !name) {
+        alert("Bhai, pehle Username, Phone aur Telegram ID bharo!");
+        return;
+    }
+
+    // OTP Generate karna
+    generatedOTP = Math.floor(100000 + Math.random() * 900000);
+
+    // Backend (send-otp.js) ko call karke Telegram par OTP bhejna
+    try {
+        const response = await fetch('/api/send-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegramId: telegramId, otp: generatedOTP })
+        });
+
+        const result = await response.json();
+        if(result.success) {
+            // OTP bhejte hi Pop-up khul jayega
+            verifyWithPopup(name, phone);
+        } else {
+            alert("Error: Bot ko /start karo pehle!");
+        }
+    } catch (err) {
+        alert("Connection Error! Vercel par send-otp.js check karein.");
+    }
+}
+
+// 3. Pop-up mein OTP verify karke auto-redirect karna
+function verifyWithPopup(name, phone) {
+    const userOTP = prompt("🔐 KGL VERIFICATION\n\nTelegram Bot par 6-digit OTP bheja gaya hai.\nYahan dalo:");
+
+    if(userOTP == generatedOTP && generatedOTP !== null) {
+        // Pop-up verify hote hi data save
+        localStorage.setItem('kgl_name', name);
+        localStorage.setItem('kgl_num', phone);
+        localStorage.setItem('kgl_balance', "100.00");
+
+        alert("✅ Verification Successful!\nRedirecting to Dashboard...");
+        window.location.href = "home.html"; // Auto redirect
+    } else {
+        alert("❌ Galat OTP! Account nahi bana.");
+    }
+}
+
+        // Tab switching logic (Jo aapke CSS/Tabs ke liye zaroori hai)
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove("active");
+            }
+            tablinks = document.getElementsByClassName("tab-link");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        function togglePass(id, icon) {
+            let input = document.getElementById(id);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("fa-eye-slash", "fa-eye");
+            } else {
+                input.type = "password";
+                icon.classList.replace("fa-eye", "fa-eye-slash");
+            }
+        }
+
+        // Vercel Ready Login Function
+        function loginUser() {
+            let phone = document.getElementById('phoneInput').value; 
+            let password = document.getElementById('passInput').value;
+
+            if(phone.length >= 10 && password !== "") {
+                // Browser memory mein data save karna
+                localStorage.setItem('kgl_num', phone);
+                localStorage.setItem('kgl_name', "Saju Bhai"); 
+                localStorage.setItem('kgl_balance', "500.00"); 
+
+                alert("Login Successful! Welcome to KGL.");
+                window.location.href = "home.html"; // Dashboard par redirect
+            } else {
+                alert("Bhai, 10 digit number aur password sahi se dalo!");
+            }
+        }
+
+    </script>
+</body>
+</html>

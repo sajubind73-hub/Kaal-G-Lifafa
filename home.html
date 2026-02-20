@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KGL Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css"> </head>
+<body style="background-color: #05080a; color: white;">
+
+    <div class="dashboard-container">
+        <div class="user-info-card">
+            <div class="balance-area">
+                <p>Available Balance</p>
+                <h1 id="userBalance">₹ 0.00</h1>
+            </div>
+            <div class="user-details">
+                <span id="userName">Loading...</span>
+                <small id="userKglNum">KGL: 91XXXXXXXX</small>
+            </div>
+        </div>
+
+        <div class="action-grid">
+            <div class="grid-item blue-br" onclick="transferMoney()">
+                <div class="text">
+                    <h4>Pay User</h4>
+                    <span>Transfer Now</span>
+                </div>
+                <i class="fas fa-paper-plane"></i>
+            </div>
+
+            <div class="grid-item purple-br" onclick="createLifafaSimple()">
+                <div class="text">
+                    <h4>Create Lifafa</h4>
+                    <span>Generate Code</span>
+                </div>
+                <i class="fas fa-plus-circle"></i>
+            </div>
+
+            <div class="grid-item green-br" onclick="claimLifafa()">
+                <div class="text">
+                    <h4>Claim Code</h4>
+                    <span>Redeem Now</span>
+                </div>
+                <i class="fas fa-qrcode"></i>
+            </div>
+
+            <div class="grid-item orange-br" onclick="location.href='number-tool.html'">
+                <div class="text">
+                    <h4>Number Tool</h4>
+                    <span>Bulk Filter</span>
+                </div>
+                <i class="fas fa-hashtag"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Data Load karna (Database ki jagah LocalStorage)
+        window.onload = function() {
+            let balance = localStorage.getItem('kgl_balance') || "500.00";
+            let name = localStorage.getItem('kgl_name') || "Saju Bhai";
+            let kglNum = localStorage.getItem('kgl_num') || "91XXXXXXXX";
+
+            document.getElementById('userBalance').innerText = "₹ " + balance;
+            document.getElementById('userName').innerText = name;
+            document.getElementById('userKglNum').innerText = "KGL: " + kglNum;
+
+            // First time setup agar data nahi hai
+            if(!localStorage.getItem('kgl_balance')) {
+                localStorage.setItem('kgl_balance', "500.00");
+                localStorage.setItem('kgl_name', "Saju Bhai");
+                localStorage.setItem('kgl_num', "91XXXXXXXX");
+            }
+        };
+
+        // 2. Pay User (Transfer Money Logic)
+        function transferMoney() {
+            let receiver = prompt("Enter Receiver KGL Number:");
+            if(!receiver) return;
+            let amt = prompt("Enter Amount to Transfer:");
+            if(!amt || isNaN(amt)) return;
+
+            let currentBal = parseFloat(localStorage.getItem('kgl_balance'));
+            if(currentBal >= amt) {
+                let newBal = (currentBal - parseFloat(amt)).toFixed(2);
+                localStorage.setItem('kgl_balance', newBal);
+                document.getElementById('userBalance').innerText = "₹ " + newBal;
+                alert("KGL Success!\nAmount Sent: ₹" + amt + "\nTo: " + receiver);
+            } else {
+                alert("Insufficient Balance!");
+            }
+        }
+
+        // 3. Create Lifafa (Code Generation)
+        function createLifafaSimple() {
+            let amt = prompt("Enter Lifafa Amount:");
+            if(!amt || isNaN(amt)) return;
+
+            let currentBal = parseFloat(localStorage.getItem('kgl_balance'));
+            if(currentBal >= amt) {
+                let code = "KGL-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+                let newBal = (currentBal - parseFloat(amt)).toFixed(2);
+                
+                localStorage.setItem('kgl_balance', newBal);
+                document.getElementById('userBalance').innerText = "₹ " + newBal;
+                
+                // Lifafa list mein save karna (Vercel ke liye temporary)
+                let lifafas = JSON.parse(localStorage.getItem('kgl_codes') || "[]");
+                lifafas.push({code: code, amount: amt});
+                localStorage.setItem('kgl_codes', JSON.stringify(lifafas));
+
+                alert("Lifafa Created!\nCode: " + code + "\nAmount: ₹" + amt);
+            } else {
+                alert("Balance low hai bhai!");
+            }
+        }
+
+        // 4. Claim Lifafa (Redeem Logic)
+        function claimLifafa() {
+            let code = prompt("Enter KGL Code to Claim:");
+            if(!code) return;
+
+            let lifafas = JSON.parse(localStorage.getItem('kgl_codes') || "[]");
+            let index = lifafas.findIndex(l => l.code === code);
+
+            if(index !== -1) {
+                let amt = parseFloat(lifafas[index].amount);
+                let currentBal = parseFloat(localStorage.getItem('kgl_balance'));
+                let newBal = (currentBal + amt).toFixed(2);
+
+                localStorage.setItem('kgl_balance', newBal);
+                document.getElementById('userBalance').innerText = "₹ " +
